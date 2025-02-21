@@ -28,3 +28,12 @@ Vulkan:
         Submit Work
         Wait
     Cleanup
+    
+GIT
+    Run agent
+        eval "$(ssh-agent -s)"
+    Add key to agent
+        ssh-add ~/.ssh/GitHubNEAT
+        
+OpenCL compile
+    g++ -std=c++0x -o hello src/hello/hello.cpp -lOpenCL
