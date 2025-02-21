@@ -7,7 +7,7 @@
 #include <string>
 
 std::string kernel_code =
-    "       void kernel func(global const int* A, global const int* B, global int* C){"
+    "       void kernel func(global const float* A, global const float* B, global float* C){"
     "       C[get_global_id(0)]=pow(A[get_global_id(0)],B[get_global_id(0)]);          "
     "   }                                                                                   ";
     /*"   void kernel simple_add(global const int* A, global const int* B, global int* C){ "
@@ -42,9 +42,9 @@ int main(int arg, char* args[])
     //context
     cl::Context context({default_device});
     
-    cl::Buffer A_d(context, CL_MEM_READ_WRITE, sizeof(int) * SIZE);
-    cl::Buffer B_d(context, CL_MEM_READ_WRITE, sizeof(int) * SIZE);
-    cl::Buffer C_d(context, CL_MEM_READ_WRITE, sizeof(int) * SIZE);
+    cl::Buffer A_d(context, CL_MEM_READ_WRITE, sizeof(float) * SIZE);
+    cl::Buffer B_d(context, CL_MEM_READ_WRITE, sizeof(float) * SIZE);
+    cl::Buffer C_d(context, CL_MEM_READ_WRITE, sizeof(float) * SIZE);
     
     //Allocating memory -> Buffer
     //*_h = host
@@ -57,8 +57,8 @@ int main(int arg, char* args[])
     cl::CommandQueue queue(context, default_device);
     
     //Writing into device memory
-    queue.enqueueWriteBuffer(A_d, CL_TRUE, 0, sizeof(int) * SIZE, A_h);
-    queue.enqueueWriteBuffer(B_d, CL_TRUE, 0, sizeof(int) * SIZE, B_h);
+    queue.enqueueWriteBuffer(A_d, CL_TRUE, 0, sizeof(float) * SIZE, A_h);
+    queue.enqueueWriteBuffer(B_d, CL_TRUE, 0, sizeof(float) * SIZE, B_h);
     
     //Kernel
     //Hamilton
