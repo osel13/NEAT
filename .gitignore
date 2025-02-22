@@ -32,7 +32,7 @@
 *.app
 
 /Uzeful.txt
-
+/.directory
 # Windows
 *.ilk
 *.log
