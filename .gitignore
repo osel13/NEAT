@@ -30,3 +30,19 @@
 *.exe
 *.out
 *.app
+
+# Windows
+*.ilk
+*.log
+*.idb
+*.pdb
+*.tlog
+*.recipe
+*.cmake
+*build*
+
+# Visual studio (code)
+**/.vs/*
+**/.vscode/*
+win-lib/*
+*vcxproj.user
