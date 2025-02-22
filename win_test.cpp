@@ -1,17 +1,14 @@
 ﻿#define CL_HPP_MINIMUM_OPENCL_VERSION 100
 #define CL_HPP_TARGET_OPENCL_VERSION 300
 
-#ifdef __LINUX__
-#include <CL/cl.hpp>
-#endif
-#ifdef __WINDOWS__
-#include <CL/opencl.hpp>
-#endif
 #include <iostream>
 #include <fstream>
 #include <vector>
 
-int main()
+#include "include_cl.h"
+#include "win_test.h"
+
+void win_test()
 {
     std::vector<cl::Platform> platforms;
     cl::Platform::get(&platforms);
@@ -22,13 +19,11 @@ int main()
 
     auto device = devices.front();
 
-    std::ifstream helloWorldFile("kernel.cl");
-    std::string src(std::istreambuf_iterator<char>(helloWorldFile), (std::istreambuf_iterator<char>()));
-
-    cl::Program::Sources sources = {src};
+    std::ifstream kernel_file("kernel.cl");
+    std::string kernel_source(std::istreambuf_iterator<char>(kernel_file), (std::istreambuf_iterator<char>()));
 
     cl::Context context(device);
-    cl::Program program(context, sources);
+    cl::Program program(context, { kernel_source });
 
     auto err = program.build("-cl-std=CL1.2");
 
@@ -40,6 +35,4 @@ int main()
     cl::CommandQueue queue(context, device);
     queue.enqueueTask(kernel);
     queue.enqueueReadBuffer(memBuf, CL_TRUE, 0, sizeof(buf), buf);
-
-    return 0;
 }

@@ -1,8 +1,10 @@
 #define __CL_ENABLE_EXCEPTIONS
-#include <CL/cl.hpp>
 #include <iostream>
 
-int main(int arg, char* args[])
+#include "include_cl.h"
+#include "test_gpu.h"
+
+int test_gpu()
 {
 	std::vector<cl::Platform> platforms;
 	cl::Platform::get(&platforms);
