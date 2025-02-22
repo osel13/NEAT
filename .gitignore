@@ -36,7 +36,10 @@
 /.directory
 source/createInputTest
 source/XOR
-
+source/draw
+source/XOR
+source/inputTest
+source/drawInputTest
 # Windows
 *.ilk
 *.log

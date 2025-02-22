@@ -6,6 +6,7 @@
 
 //make XOR vector
 std::vector<float> make_XOR_vector(std::vector<float> A, std::vector<float> B) {
+    // cassert
     if (A.size() != B.size()){
         std::cout << "uneven input length" << std::endl;
         exit(1);
@@ -15,6 +16,7 @@ std::vector<float> make_XOR_vector(std::vector<float> A, std::vector<float> B) {
         for(int i = 0; i < A.size(); i++){
             if((A[i] == 1 && B[i] == 0)||(A[i] == 0 && B[i] == 1)){
                 C.push_back(1);
+                // A[i] != B[i]
             }
             else {
                 C.push_back(0);
