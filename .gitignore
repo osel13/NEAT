@@ -31,8 +31,11 @@
 *.out
 *.app
 
+#Linux
 /Uzeful.txt
 /.directory
+/source/inputTest
+
 # Windows
 *.ilk
 *.log
