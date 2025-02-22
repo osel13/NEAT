@@ -130,13 +130,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="neat.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="neat.h" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="test_gpu.cpp" />
+    <ClCompile Include="win_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kernel.cl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include_cl.h" />
+    <ClInclude Include="test_gpu.h" />
+    <ClInclude Include="win_test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
