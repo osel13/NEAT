@@ -14,4 +14,5 @@ For Windows, it is VERY recommended to:
    4. Edit PATH environmental variable to include this directory (IMPORTANT)
 3. Install OpenCL (powershell)
    1. vcpkg install opencl:x64-windows (may be different for 32-bit platforms)
+      - It may require allowing more win http protocols in registry editor
    2. Move the directory to `win-lib` in this project (IMPORTANT)
