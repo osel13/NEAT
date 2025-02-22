@@ -36,4 +36,4 @@ GIT
         ssh-add ~/.ssh/GitHubNEAT
         
 OpenCL compile
-    g++ -std=c++0x -o hello src/hello/hello.cpp -lOpenCL
+    g++ -std=c++0x -o Scratch Scratch.cpp -lOpenCL
