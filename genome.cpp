@@ -20,5 +20,10 @@ namespace neat {
 		return Genome(std::make_shared<neural_network::NeatNetwork>(network->crossover(*other.network)));
 	}
 
+	void Genome::mutate()
+	{
+		// todo select random mutation depending on probability
+	}
+
 	int Genome::global_innovation_number = 0;
 } // namespace neat

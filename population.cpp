@@ -32,4 +32,10 @@ namespace neat {
 		// for now we just use two individuals and cross them over
 		individuals[0] = individuals[0].crossover(individuals[1]);
 	}
+	void Population::mutate()
+	{
+		// TODO: implement
+		// for now we just mutate the first individual
+		individuals[0].mutate();
+	}
 } // namespace neat

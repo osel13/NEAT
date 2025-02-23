@@ -2,71 +2,50 @@
 
 #include <array>
 #include <vector>
+#include <set>
+#include <unordered_set>
 #include <cassert>
 #include <ostream>
 #include <istream>
 #include <memory>
+#include <typeindex> 
 #include "utils.h"
 #include "activation_function.hpp"
+#include "neuron.h"
+#include "edge.h"
 
 namespace neural_network {
-	
-	class Neuron {
-		int id;
-		float bias;
-		float current_input;
-		ActivationFunction activation_function;
-
-		void reset();
-		friend class NeatNetwork;
-	public:
-		Neuron(unsigned int innovation_number);
-
-		float evaluate() const;
-		Neuron crossover(const Neuron& other) const;
-
-		std::ostream& operator<<(std::ostream& stream) const;
-		std::istream& operator>>(std::istream& stream);
-	};
-
-	class Edge {
-		int id;
-		int from_id;
-		int to_id;
-		float weight;
-		bool is_disabled;
-		friend class NeatNetwork;
-	public:
-		Edge(unsigned from_id, unsigned to_id, unsigned innovation_id);
-
-		void set_disabled(const bool value = true);
-		float evaluate(const float input) const;
-		Edge crossover(const Edge& other) const;
-	};
 
 	class NeatNetwork {
 		static int next_id;
 		using SharedNeuronReference = std::shared_ptr<Neuron>;
-		using Neurons = std::vector<SharedNeuronReference>;
-		using NeuronInputs = std::vector<float>;
-		using NeuronOutputs = std::vector<float>;
+		using SharedNeuronSet = std::set<SharedNeuronReference>;
+		using SharedNeurons = std::vector<SharedNeuronReference>;
+		using Neurons = std::vector<SharedNeuronReference>; // this could possibly be a (unordered) set later
+		using Edges = std::unordered_set<Edge, EdgeHasher>;
 
 		int id;
 		int next_edge_innovation_number;
 		int next_neuron_innovation_number;
 		float fitness;
 		Neurons neurons;
-		std::vector<Edge> edges;
-		std::vector<Neurons> layers;
+		Edges edges;
+		SharedNeurons input_neurons;
+		SharedNeurons output_neurons;
 
 		void mutate_add_neuron();
 		void reset_intermediate_calculations();
+		void add_neuron(const SharedNeuronReference& new_neuron, const NeatNetwork& old_network, const SharedNeuronReference& old_neuron);
+		void evaluate_neuron(const Neuron& neuron);
 		void evaluate_layer(const Neurons& layer);
+		void create_special_neuron(SharedNeurons& special_neuron_container, unsigned int count = 1);
+		void crossover_neurons(NeatNetwork& result, const NeatNetwork& other) const;
+		void crossover_edges(NeatNetwork& result, const NeatNetwork& other) const;
 	public:
 		NeatNetwork();
 		NeatNetwork(unsigned input_neurons, unsigned output_neurons);
 		NeatNetwork crossover(const NeatNetwork& other) const;
-		std::vector<float> evaluate(const NeuronInputs& input_data);
+		std::vector<float> evaluate(const std::vector<float>& input_data);
 	};
 
 	/*

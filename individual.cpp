@@ -18,6 +18,11 @@ namespace neat {
 		return genome.crossover(other.genome);
 	}
 
+	void Individual::mutate()
+	{
+		genome.mutate();
+	}
+
 	float Individual::get_fitness() const
 	{
 		return fitness;

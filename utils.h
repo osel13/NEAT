@@ -25,7 +25,7 @@ RealOrIteratorType random_from_range(RealOrIteratorType start, RealOrIteratorTyp
 
 template <typename Type, typename RandomGenerator>
 const Type& random_thresholded_pick(float threshold, const Type& a, const Type& b, RandomGenerator& random) {
-    std::uniform_int_distribution<> distribution(0, 1);
+    std::bernoulli_distribution distribution(threshold);
 	const auto random_value = distribution(random);
     return random_value ? a : b;
 }

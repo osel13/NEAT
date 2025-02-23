@@ -12,11 +12,11 @@ namespace neat {
 		Genome(unsigned input_neurons = 1, unsigned output_neurons = 1);
 		Genome(std::shared_ptr<neural_network::NeatNetwork>&& network);
 		Genome crossover(const Genome& other) const;
+		void mutate();
 		void mutate_add_neuron();
 		void mutate_add_edge();
 		void mutate_change_weight();
 		void mutate_toggle_edge();
-		void mutate();
 	};
 
 } // namespace neat

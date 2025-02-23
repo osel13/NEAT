@@ -1,77 +1,9 @@
+#include <set>
+#include <map>
 #include "neural_network.h"
 #include "utils.h"
 
 namespace neural_network {
-
-	void Neuron::reset()
-	{
-		current_input = 0;
-	}
-
-	Neuron::Neuron(unsigned innovation_id) 
-		: id(innovation_id)
-		, bias(0)
-		, activation_function()
-		, current_input(0)
-	{
-	}
-
-	float Neuron::evaluate() const 
-	{
-		return activation_function.evaluate(current_input + bias);
-	}
-
-	Neuron Neuron::crossover(const Neuron& other) const 
-	{
-		assert(id == other.id);
-		auto result = Neuron(id);
-		const auto threshold = 0.5f;
-		result.bias = random_thresholded_pick(threshold, bias, other.bias);
-		result.activation_function = random_thresholded_pick(threshold, activation_function, other.activation_function);
-		return result;
-	}
-	std::ostream& Neuron::operator<<(std::ostream& stream) const
-	{
-		const auto separator = ' ';
-		return stream << id << separator << bias << separator;
-	}
-	std::istream& Neuron::operator>>(std::istream& stream)
-	{
-		return stream >> id >> std::ws >> bias;
-	}
-	
-	Edge::Edge(unsigned from_id, unsigned to_id, unsigned innovation_id)
-		: from_id(from_id)
-		, to_id(to_id)
-		, weight(random_from_range(-1.f, 1.f))
-		, is_disabled(false)
-		, id(innovation_id)
-	{
-	}
-
-	void Edge::set_disabled(const bool value)
-	{
-		is_disabled = value;
-	}
-
-	float Edge::evaluate(const float input) const
-	{
-		if (is_disabled) {
-			return 0;
-		}
-		return input * weight;
-	}
-
-	Edge Edge::crossover(const Edge& other) const
-	{
-		assert(id == other.id);
-		auto result = Edge(*this);
-		const auto threshold = 0.5;
-		result.weight = random_thresholded_pick(threshold, weight, other.weight);
-		result.is_disabled = is_disabled || other.is_disabled;
-		return result;
-	}
-	
 	int NeatNetwork::next_id = 0;
 
 	void NeatNetwork::mutate_add_neuron()
@@ -84,6 +16,16 @@ namespace neural_network {
 		//auto& edge = random_select(edges);
 	}
 
+	void NeatNetwork::add_neuron(const SharedNeuronReference& new_neuron, const NeatNetwork& old_network, const SharedNeuronReference& old_neuron) {
+		if (std::find(old_network.input_neurons.begin(), old_network.input_neurons.end(), old_neuron) != old_network.input_neurons.end()) {
+			input_neurons.emplace_back(new_neuron);
+		}
+		if (std::find(old_network.output_neurons.begin(), old_network.output_neurons.end(), old_neuron) != old_network.output_neurons.end()) {
+			output_neurons.emplace_back(new_neuron);
+		}
+		neurons.emplace_back(new_neuron);
+	}
+
 	NeatNetwork NeatNetwork::crossover(const NeatNetwork& other) const
 	{
 		// We assume that this network is dominant over the other
@@ -91,25 +33,8 @@ namespace neural_network {
 		assert(id != other.id);
 		NeatNetwork result;
 		const auto threshold = random_from_range(0.1f, 0.9f);
-		for (unsigned i = 0; i < neurons.size(); ++i) {
-			const auto& neuron = neurons[i];
-			const auto& other_neuron = other.neurons[i];
-			if (neuron->id == other_neuron->id) {
-				result.neurons.emplace_back(std::make_shared<Neuron>(neuron->crossover(*other_neuron)));
-				continue;
-			}
-			result.neurons.emplace_back(neuron);
-		}
-		// Crossover edges
-		for (unsigned i = 0; i < std::max(edges.size(), other.edges.size()); ++i) {
-			const auto& edge = edges[i];
-			const auto& other_edge = other.edges[i];
-			if (edge.id == other_edge.id) {
-				result.edges.emplace_back(edge.crossover(other_edge));
-				continue;
-			}
-			result.edges.emplace_back(edge);
-		}
+		crossover_neurons(result, other);
+		crossover_edges(result, other);
 		return result;
 	}
 
@@ -128,64 +53,147 @@ namespace neural_network {
 	{
 	}
 
-	NeatNetwork::NeatNetwork(unsigned input_neurons, unsigned output_neurons)
+	NeatNetwork::NeatNetwork(unsigned input_neuron_count, unsigned output_neuron_count)
 		: NeatNetwork()
 	{
-		neurons.reserve(input_neurons + output_neurons);
-		auto input_layer = Neurons();
-		auto output_layer = Neurons();
-		input_layer.reserve(input_neurons);
-		output_layer.reserve(output_neurons);
-		for (unsigned i = 0; i < input_neurons; i++) {
-			auto neuron = std::make_shared<Neuron>(next_neuron_innovation_number++);
-			input_layer.emplace_back(neuron);
-			neurons.emplace_back(neuron);
-		}
-		for (unsigned i = 0; i < output_neurons; i++) {
-			auto neuron = std::make_shared<Neuron>(next_neuron_innovation_number++);
-			output_layer.emplace_back(neuron);
-			neurons.emplace_back(neuron);
-		}
-		for (const auto& input_neuron : input_layer) {
-			for (const auto& output_neuron : output_layer) {
-				edges.emplace_back(Edge(input_neuron->id, output_neuron->id, next_edge_innovation_number++));
+		create_special_neuron(input_neurons, input_neuron_count);
+		create_special_neuron(output_neurons, output_neuron_count);
+		for (const auto& input_neuron : input_neurons) {
+			for (const auto& output_neuron : output_neurons) {
+				edges.emplace(Edge(input_neuron->id, output_neuron->id, next_edge_innovation_number++));
 			}
 		}
-		layers.emplace_back(input_layer);
-		layers.emplace_back(output_layer);
+	}
+
+	void NeatNetwork::evaluate_neuron(const Neuron& neuron) {
+		auto edge_it = std::find_if(edges.begin(), edges.end(), [&](const Edge& edge) {
+			return edge.id.from_id == neuron.id;
+		});
+		auto neuron_it = std::find_if(neurons.begin(), neurons.end(), [&](const SharedNeuronReference& neuron) {
+			return edge_it->id.to_id == neuron->id;
+		});
+		(*neuron_it)->current_input += edge_it->evaluate(neuron.evaluate());
 	}
 
 	void NeatNetwork::evaluate_layer(const Neurons& layer)
 	{
 		for (const auto& neuron : layer) {
-			auto edge_it = std::find_if(edges.begin(), edges.end(), [&](const Edge& edge) {
-				return edge.from_id == neuron->id;
-			});
-			auto neuron_it = std::find_if(neurons.begin(), neurons.end(), [&](const SharedNeuronReference& neuron) {
-				return edge_it->to_id == neuron->id;
-			});
-			(*neuron_it)->current_input += edge_it->evaluate(neuron->evaluate());
+			evaluate_neuron(*neuron);
 		}
 	}
 
-	std::vector<float> NeatNetwork::evaluate(const NeuronInputs& input_data)
+	void NeatNetwork::create_special_neuron(SharedNeurons& special_neuron_container, unsigned int count)
 	{
-		auto& first_layer = layers.front();
-		assert(input_data.size() >= first_layer.size());
-		for (unsigned i = 0; i < first_layer.size(); ++i) {
-			first_layer[i]->current_input = input_data[i];
+		for (unsigned i = 0; i < count; i++) {
+			auto neuron = std::make_shared<Neuron>(next_neuron_innovation_number++);
+			special_neuron_container.emplace_back(neuron);
+			neurons.emplace_back(neuron);
 		}
-		for (auto it = layers.begin(); it + 1 != layers.end(); ++it) {
-			evaluate_layer(*it);
+	}
+
+	void NeatNetwork::crossover_neurons(NeatNetwork& result, const NeatNetwork& other) const
+	{
+		for (unsigned i = 0; i < neurons.size(); ++i) {
+			const auto& neuron = neurons[i];
+			const auto& other_neuron = other.neurons[i];
+			if (neuron->id == other_neuron->id) {
+				auto new_neuron = std::make_shared<Neuron>(neuron->crossover(*other_neuron));
+				result.add_neuron(new_neuron, *this, neuron);
+				continue;
+			}
+			result.add_neuron(neuron, *this, neuron);
 		}
-		const auto& last_layer = layers.back();
-		std::vector<float> results(last_layer.size());
-		for (unsigned i = 0; i < last_layer.size(); ++i) {
-			const auto neuron = last_layer[i];
-			results[i] = neuron->evaluate();
+	}
+
+	void NeatNetwork::crossover_edges(NeatNetwork& result, const NeatNetwork& other) const
+	{
+		for (const auto& edge : edges) {
+			const auto& other_edge = other.edges.find(edge);
+			if (other_edge != other.edges.end()) {
+				result.edges.emplace(edge.crossover(*other_edge));
+				continue;
+			}
+			result.edges.emplace(edge);
+		}
+		return;
+		//
+
+		/*for (unsigned i = 0; i < std::max(edges.size(), other.edges.size()); ++i) {
+			const auto& edge = edges[i];
+			const auto& other_edge = other.edges[i];
+			if (edge.innovation_id == other_edge.innovation_id) {
+				result.edges.emplace(edge.crossover(other_edge));
+				continue;
+			}
+			result.edges.emplace(edge);
+		}*/
+
+	}
+
+	std::vector<float> NeatNetwork::evaluate(const std::vector<float>& input_data)
+	{
+		assert(input_data.size() >= input_neurons.size());
+		std::map<int, Neuron> neuron_map;
+		for (unsigned i = 0; i < input_neurons.size(); ++i) {
+			input_neurons[i]->current_input = input_data[i];
+		}
+		
+		SharedNeuronSet not_visited(input_neurons.begin(), input_neurons.end());
+		while (!not_visited.empty()) {
+			SharedNeuronSet to_visit_next;
+			for (auto& neuron: not_visited) {
+				evaluate_neuron(*neuron);
+				for (const auto& edge : edges) {
+					if (edge.id.from_id == neuron->id) {
+						auto next_neuron = std::find_if(neurons.begin(), neurons.end(), [&](const SharedNeuronReference& neuron) {
+							return neuron->id == edge.id.to_id;
+						});
+						auto is_leading_to_output = false;
+						for (const auto& output_neuron : output_neurons) {
+							if (output_neuron->id == edge.id.to_id) {
+								is_leading_to_output = true;
+								break;
+							}
+						}
+						if (!is_leading_to_output) {
+							to_visit_next.insert(*next_neuron);
+						}
+					}
+				}
+			}
+			not_visited = to_visit_next;
+		}
+		std::vector<float> results(output_neurons.size());
+		for (unsigned i = 0; i < output_neurons.size(); ++i) {
+			results[i] = output_neurons[i]->evaluate();
 		}
 		reset_intermediate_calculations();
 
 		return results;
 	}
-}
+
+	EdgeId::EdgeId(int from_id, int to_id)
+		: from_id(from_id)
+		, to_id(to_id)
+	{
+	}
+
+	bool EdgeId::operator<(const EdgeId& other) const
+	{
+		if (from_id == other.from_id) {
+			return to_id < other.to_id;
+		}
+		return from_id < other.from_id;
+	}
+
+	bool EdgeId::operator==(const EdgeId& other) const
+	{
+		return from_id == other.from_id && to_id == other.to_id;
+	}
+
+	std::size_t EdgeId::operator()() const
+	{
+		return from_id ^ to_id;
+	}
+
+} // namespace neural_network

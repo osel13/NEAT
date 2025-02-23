@@ -4,9 +4,10 @@
 #include <iostream>
 
 int main(int argc, char* argv[]) {
-	//neural_network::smallest_network_evaluation_test();
+	neural_network::smallest_network_evaluation_test();
 	neat::Population population(100, 0.5);
 	population.crossover();
+	population.mutate();
 	population.print();
 	return 0;
 }

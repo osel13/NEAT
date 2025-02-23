@@ -13,15 +13,81 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\neural_network">
+      <UniqueIdentifier>{3d30d4ad-ae66-4fe3-a553-313bd8eb396b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\neural_network">
+      <UniqueIdentifier>{46659699-db2f-42d2-94e0-61002a5425e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="neat.cpp">
+    <ClCompile Include="genome.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="individual.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="population.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test_gpu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="win_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="activation_function.cpp">
+      <Filter>Source Files\neural_network</Filter>
+    </ClCompile>
+    <ClCompile Include="edge.cpp">
+      <Filter>Source Files\neural_network</Filter>
+    </ClCompile>
+    <ClCompile Include="neural_network.cpp">
+      <Filter>Source Files\neural_network</Filter>
+    </ClCompile>
+    <ClCompile Include="neural_network_tests.cpp">
+      <Filter>Source Files\neural_network</Filter>
+    </ClCompile>
+    <ClCompile Include="neuron.cpp">
+      <Filter>Source Files\neural_network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="neat.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="genome.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include_cl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="individual.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="population.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test_gpu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="win_test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="edge.h">
+      <Filter>Header Files\neural_network</Filter>
+    </ClInclude>
+    <ClInclude Include="neural_network.h">
+      <Filter>Header Files\neural_network</Filter>
+    </ClInclude>
+    <ClInclude Include="neural_network_tests.h">
+      <Filter>Header Files\neural_network</Filter>
+    </ClInclude>
+    <ClInclude Include="neuron.h">
+      <Filter>Header Files\neural_network</Filter>
+    </ClInclude>
+    <ClInclude Include="activation_function.hpp">
+      <Filter>Header Files\neural_network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
