@@ -5,5 +5,5 @@
 float ActivationFunction::evaluate(const float input) const
 {
 	// Sigmoid activation function
-	return 1.0 / (1.0 + exp(-input));
+	return 1.0f / (1.0f + exp(-input));
 }
