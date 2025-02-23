@@ -201,17 +201,17 @@ std::vector<std::string> break_page_to_networks(std::string page) {
 std::vector<float> lookup_fitments(std::vector<std::string> networks) {        
         std::vector<float> fitments;
         int comma_flag = false;
-        int colon_flag = false;
+        int colon_counter = 0;
         std::string temp_str2;
-        for(int j = 0; j<networks.size(); j++){
+        for(int j = 0; j < networks.size(); j++){
             for(int k = 0; k<networks[j].size(); k++){
                 if(networks[j][k] == ',') {
                         comma_flag = true;
                 }
                 if(networks[j][k] == ':') {
-                        colon_flag = true;
+                        colon_counter += 1;
                 }
-                if(comma_flag && colon_flag) {
+                if(comma_flag && colon_counter > 1) {
                     if(networks[j][k] == ',') {
                         std::cout << temp_str2 << 1 << std::endl;
                         ///tohle hází prázdnej string... jahoda? nemyslím si....
@@ -219,10 +219,10 @@ std::vector<float> lookup_fitments(std::vector<std::string> networks) {
                         fitments.push_back(value);
                         temp_str2.clear();
                         comma_flag = false;
-                        colon_flag = false;
+                        colon_counter= 0;
                         break;
                     }
-                    else if(networks[j][k] == ' ') {
+                    else if(networks[j][k] == ' '||networks[j][k] == ':') {
                         continue;
                     }
                     else {
