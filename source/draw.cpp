@@ -3,34 +3,33 @@
 #include <SDL2/SDL.h>
 #include <cstdio>
 #include <vector>
+#include <string>
+#include <sstream>
+#include <fstream>
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
+
+const int NEURON_WIDTH = 20;
+const int NEURON_HEIGHT = 20;
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
 void init();
 void close();
+vector<std::string> read_file(std::string path);
+std::string find_fittest_network(vector<std::string> networks);
+std::vector<std::string> break_network(std::string network);
+std::vector<std::string> break_to_layers(vector<std::string> BBR);
+std::vector<std::vector<std::string>> break_to_neurons(vector<std::string> layers);
+std::vector<std::string> break_to_edges(vector<std::string> BBR);
 
-//something read_input();
 
 int main(int argc, char *argv[])
 {
-  
     
-    
-//read_input();
-    int firstLayerNeuronCount = 2;
-    int lastLayerNeuronCount = 1;
-    int maxVerticalNeurons = 3;
-    int maxHorizontalNeurons = 3;
 
-//Select the best network
- 
-//calculate node position
-    
-//calculate node size
     
 //Draw window 1280x720 (scalable?)
     
@@ -49,7 +48,7 @@ int main(int argc, char *argv[])
     
     //Clear screen
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF );
-    SDL_RenderClear(renderer );
+    SDL_RenderClear(renderer);
 
     /*
     //Render red filled quad
@@ -84,7 +83,11 @@ int main(int argc, char *argv[])
 //Neurons has to fit max is 2 pixels more than number height, square box (panning?)
 //count neurons, count sizes
     
-
+    //draw edges
+    
+    //draw neurons
+    
+/*
 //draw input nodes
     //enabled node
     SDL_Rect input_enabled = { SCREEN_WIDTH*1/3-10 , SCREEN_HEIGHT*2/3-10, 20, 20 };
@@ -126,6 +129,7 @@ int main(int argc, char *argv[])
     SDL_SetRenderDrawColor(renderer, 0x50, 0x50, 0x00, 0xFF );
     SDL_RenderDrawLine(renderer, SCREEN_WIDTH*1/2+10, SCREEN_HEIGHT*1/3, SCREEN_WIDTH*2/3-10, SCREEN_HEIGHT*2/3 );
 //draw numbers (must be on top of nodes
+*/
     
     SDL_RenderPresent(renderer);
     }
@@ -169,10 +173,81 @@ void close() {
     SDL_Quit();
 }
 
-/*
-something read_input(path);{
+vector<std::string> read_file(std::string path) {
+    vector<std::string> networks;
     
+    
+    
+    return networks;
 }
-*/
+
+//find fitest
+std::string find_fittest_network(vector<std::string> networks) {
+    std::string network;
+    return network;
+}
+//break network
+std::vector<std::string> break_network(std::string network) {
+    vector<std::string> BBR;
+
+    return BBR;
+}
+//break to layers
+std::vector<std::string> break_to_layers(vector<std::string> BBR) {
+    vector<std::string> layers;
+    
+    //sort layers first = input, last = output; 
+    
+    return layers;
+}
+//break layers to neurons
+std::vector<std::vector<std::string>> break_to_neurons(vector<std::string> layers) {
+    vector<std::string> neurons;
+    
+    //break neurons to neurons
+    
+    //add neuron positions
+    
+    //determine color range + add colors
+    
+    return neurons;
+}
+//break to edges
+std::vector<std::string> break_to_edges(vector<std::string> BBR) {
+    vector<std::string> edges;
+    
+    //break neurons to neurons
+    
+    //determine color range + add colors
+    
+    return edges;
+}
+
+
+int data_init() {
+    vector<std::string> read_file(std::string path);
+std::string find_fittest_network(vector<std::string> networks);
+std::vector<std::string> break_network(std::string network);
+std::vector<std::string> break_to_layers(vector<std::string> BBR);
+std::vector<std::vector<std::string>> break_to_neurons(vector<std::string> layers);
+std::vector<std::string> break_to_edges(vector<std::string> BBR);
+return 0;
+}
+
+int data_update() {
+    vector<std::string> read_file(std::string path);
+std::string find_fittest_network(vector<std::string> networks);
+std::vector<std::string> break_network(std::string network);
+std::vector<std::string> break_to_layers(vector<std::string> BBR);
+std::vector<std::vector<std::string>> break_to_neurons(vector<std::string> layers);
+std::vector<std::string> break_to_edges(vector<std::string> BBR);
+return 0;
+}
+
+
+
+
+
+
 
 
