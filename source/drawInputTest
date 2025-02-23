@@ -1,0 +1,117 @@
+"Networks": [
+    {
+    "ID": 0,
+    "Fitness": 1.0,
+        "Layers": [
+            {
+            "ID": 0,
+            "Neurons": [
+                    {
+                    "ID": 0,
+                    "Bias: 0.0,
+                    },
+                    {
+                    "ID": 1,
+                    "Bias: 0.1,
+                    }
+                ],
+            },
+            {
+            "ID": 2,
+            "Neurons": [
+                    {
+                    "ID": 2,
+                    "Bias: 0.1,
+                    }
+                ],
+            },
+            {
+            "ID": 1,
+            "Neurons": [
+                    {
+                    "ID": 3,
+                    "Bias: 0.3,
+                    },
+                    {
+                    "ID": 4,
+                    "Bias: 0.4,
+                    },
+                    {
+                    "ID": 5,
+                    "Bias: 0.5,
+                    },
+                    {
+                    "ID": 6,
+                    "Bias: 0.6,
+                    },
+                    {
+                    "ID": 7,
+                    "Bias: 0.7,
+                    }
+                ],
+            }
+        ],
+        "Edges": [
+            {
+            "ID": 0,
+            "Disabled": False,
+            "From": 0,
+            "To": 4,
+            "Weight"
+            },
+            {
+            "ID": 1,
+            "Disabled": False,
+            "From": 0,
+            "To": 4,
+            "Weight"
+            },
+            {
+            "ID": 2,
+            "Disabled": False,
+            "From": 0,
+            "To": 4,
+            "Weight"
+            },
+            {
+            "ID": 3,
+            "Disabled": False,
+            "From": 0,
+            "To": 4,
+            "Weight"
+            },
+            {
+            "ID": 4,
+            "Disabled": False,
+            "From": 0,
+            "To": 4,
+            "Weight"
+            },
+            {
+            "ID": 5,
+            "Disabled": False,
+            "From": 0,
+            "To": 4,
+            "Weight"
+            },
+        ]
+    },
+    {
+    "ID": 0,
+    "Fitness": 0.2,
+    "Layers": [],
+    "Edges": [],
+    },
+]
+
+
+
+
+
+
+
+
+
+
+
+
