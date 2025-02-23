@@ -12,7 +12,6 @@
 namespace neural_network {
 	
 	class Neuron {
-		static int global_innovation_number;
 		int id;
 		float bias;
 		float current_input;
@@ -21,7 +20,7 @@ namespace neural_network {
 		void reset();
 		friend class NeatNetwork;
 	public:
-		Neuron();
+		Neuron(unsigned int innovation_number);
 
 		float evaluate() const;
 		Neuron crossover(const Neuron& other) const;
@@ -31,7 +30,6 @@ namespace neural_network {
 	};
 
 	class Edge {
-		static int global_innovation_number;
 		int id;
 		int from_id;
 		int to_id;
@@ -39,20 +37,23 @@ namespace neural_network {
 		bool is_disabled;
 		friend class NeatNetwork;
 	public:
-		Edge(unsigned from_id, unsigned to_id);
+		Edge(unsigned from_id, unsigned to_id, unsigned innovation_id);
 
 		void set_disabled(const bool value = true);
 		float evaluate(const float input) const;
-		Edge crossover(const Edge& other);
+		Edge crossover(const Edge& other) const;
 	};
 
 	class NeatNetwork {
+		static int next_id;
 		using SharedNeuronReference = std::shared_ptr<Neuron>;
 		using Neurons = std::vector<SharedNeuronReference>;
 		using NeuronInputs = std::vector<float>;
 		using NeuronOutputs = std::vector<float>;
 
 		int id;
+		int next_edge_innovation_number;
+		int next_neuron_innovation_number;
 		float fitness;
 		Neurons neurons;
 		std::vector<Edge> edges;
@@ -62,7 +63,9 @@ namespace neural_network {
 		void reset_intermediate_calculations();
 		void evaluate_layer(const Neurons& layer);
 	public:
-		NeatNetwork(unsigned input_neurons = 1, unsigned output_neurons = 1);
+		NeatNetwork();
+		NeatNetwork(unsigned input_neurons, unsigned output_neurons);
+		NeatNetwork crossover(const NeatNetwork& other) const;
 		std::vector<float> evaluate(const NeuronInputs& input_data);
 	};
 

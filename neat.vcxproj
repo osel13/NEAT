@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>__WINDOWS__;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)win-lib\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,8 +132,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="activation_function.cpp" />
+    <ClCompile Include="genome.cpp" />
+    <ClCompile Include="individual.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="neural_network.cpp" />
+    <ClCompile Include="neural_network_tests.cpp" />
     <ClCompile Include="population.cpp" />
     <ClCompile Include="test_gpu.cpp" />
     <ClCompile Include="win_test.cpp" />
@@ -142,9 +146,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="activation_function.hpp" />
+    <ClInclude Include="genome.h" />
     <ClInclude Include="include_cl.h" />
+    <ClInclude Include="individual.h" />
     <ClInclude Include="neural_network.h" />
-    <ClInclude Include="neural_network.hpp" />
+    <ClInclude Include="neural_network_tests.h" />
+    <ClInclude Include="population.h" />
     <ClInclude Include="test_gpu.h" />
     <ClInclude Include="win_test.h" />
   </ItemGroup>

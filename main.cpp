@@ -1,9 +1,12 @@
 
-#include "neural_network.h"
+#include "neural_network_tests.h"
+#include "population.h"
 #include <iostream>
 
 int main(int argc, char* argv[]) {
-	auto network = neural_network::NeatNetwork();
-	auto output = network.evaluate({ 1 });
+	//neural_network::smallest_network_evaluation_test();
+	neat::Population population(100, 0.5);
+	population.crossover();
+	population.print();
 	return 0;
 }
