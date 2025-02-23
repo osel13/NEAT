@@ -5,11 +5,22 @@
 
 static std::mt19937 default_generator(std::random_device{}());
 
-template<typename Iterator, typename RandomGenerator>
-Iterator random_from_range(Iterator start, Iterator end, RandomGenerator& random) {
-	auto distance = std::distance(start, end);
-    std::uniform_int_distribution<> distribution(0, std::distance(start, end) - 1);
-    return *std::advance(start, distribution(random));
+template<typename IteratorType, typename RandomGenerator>
+IteratorType random_from_range(IteratorType from, IteratorType to, RandomGenerator& random) {
+	auto distance = std::distance(from, to);
+	std::uniform_int_distribution<> distribution(0, distance - 1);
+	return *std::advance(from, distribution(random));
+}
+
+template<typename RealType, typename RandomGenerator> requires std::is_floating_point_v<RealType>
+RealType random_from_range(RealType from, RealType to, RandomGenerator& random) {
+	std::uniform_real_distribution<RealType> distribution(from, to);
+	return distribution(random);
+}
+
+template<typename RealOrIteratorType>
+RealOrIteratorType random_from_range(RealOrIteratorType start, RealOrIteratorType end) {
+	return random_from_range(start, end, default_generator);
 }
 
 template <typename Type, typename RandomGenerator>
