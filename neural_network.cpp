@@ -122,23 +122,15 @@ namespace neural_network {
 
 	void NeatNetwork::evaluate_layer(const Neurons& layer)
 	{
-		// foreach source neuron in layer
-		// find all edges leading from it
-		// add evaluation to destination neurons
 		for (const auto& neuron : layer) {
-			for (const auto& edge : edges) {
-				if (edge.from_id == neuron->id) {
-					for (auto& destination_neuron : neurons) {
-						if (destination_neuron->id == edge.to_id) {
-							destination_neuron->current_input += edge.evaluate(neuron->evaluate());
-						}
-					}
-				}
-			}
+			auto edge_it = std::find_if(edges.begin(), edges.end(), [&](const Edge& edge) {
+				return edge.from_id == neuron->id;
+			});
+			auto neuron_it = std::find_if(neurons.begin(), neurons.end(), [&](const SharedNeuronReference& neuron) {
+				return edge_it->to_id == neuron->id;
+			});
+			(*neuron_it)->current_input += edge_it->evaluate(neuron->evaluate());
 		}
-		//auto edge_it = std::find_if(edges.begin(), edges.end(), [](const Edge& edge) {
-		//	return edge.from_id == 0;
-		//});
 	}
 
 	std::vector<float> NeatNetwork::evaluate(const NeuronInputs& input_data)
