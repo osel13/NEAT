@@ -130,7 +130,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="activation_function.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="neural_network.cpp" />
+    <ClCompile Include="population.cpp" />
     <ClCompile Include="test_gpu.cpp" />
     <ClCompile Include="win_test.cpp" />
   </ItemGroup>
@@ -138,7 +141,10 @@
     <None Include="kernel.cl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="activation_function.hpp" />
     <ClInclude Include="include_cl.h" />
+    <ClInclude Include="neural_network.h" />
+    <ClInclude Include="neural_network.hpp" />
     <ClInclude Include="test_gpu.h" />
     <ClInclude Include="win_test.h" />
   </ItemGroup>

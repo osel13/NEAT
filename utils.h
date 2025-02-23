@@ -9,15 +9,14 @@ template<typename Iterator, typename RandomGenerator>
 Iterator random_from_range(Iterator start, Iterator end, RandomGenerator& random) {
 	auto distance = std::distance(start, end);
     std::uniform_int_distribution<> distribution(0, std::distance(start, end) - 1);
-    std::advance(start, distribution(random));
-    return start;
+    return *std::advance(start, distribution(random));
 }
 
 template <typename Type, typename RandomGenerator>
 const Type& random_thresholded_pick(float threshold, const Type& a, const Type& b, RandomGenerator& random) {
-    std::uniform_int_distribution<> distribution(0, std::distance(start, end) - 1);
+    std::uniform_int_distribution<> distribution(0, 1);
 	const auto random_value = distribution(random);
-    return random_value <= threshold ? a : b;
+    return random_value ? a : b;
 }
 
 template <typename Type>
