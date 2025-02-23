@@ -548,18 +548,26 @@ void draw_margin() {
 }
 
 void draw_nodes(std::vector<std::vector<std::string>> neurons) {
-    SDL_Rect arr [neurons.size()];
-    
+    SDL_Rect arr[neurons.size()];
+    // tohle dělá seg fault... std::cout << neurons[0][6] <<std::endl;
     for(int i = 0; i < neurons.size(); i++) {
-        arr[i] = { std::stoi(neurons[i][6]) , std::stoi(neurons[i][7]), std::stoi(neurons[i][8]) , std::stoi(neurons[i][9])};
+        arr[i].x  = std::stoi(neurons[i][6]);
+        arr[i].y  = std::stoi(neurons[i][7]);
+        arr[i].h  = std::stoi(neurons[i][8]);
+        arr[i].w  = std::stoi(neurons[i][9]);
         
+        SDL_SetRenderDrawColor(renderer, 0xFF , 0xFF, 0xFF, 0xFF );
+        SDL_RenderFillRect(renderer, &arr[i]);
     }
+        
+    /*
     
     for(int j = 0; j < neurons.size(); j++) {
-        SDL_SetRenderDrawColor(renderer, std::stoi(neurons[j][3]) , std::stoi(neurons[j][4]) , std::stoi(neurons[j][5]), 0xFF );
+        SDL_Rect arr[j] { std::stoi(neurons[j][6]) , std::stoi(neurons[j][7]), std::stoi(neurons[j][8]) , std::stoi(neurons[j][9])};
+        SDL_SetRenderDrawColor(renderer, std::stoi(neurons[j][3]) , 0xFF/*std::stoi(neurons[j][4])*/ /*, std::stoi(neurons[j][5]), 0xFF );
         SDL_RenderFillRect(renderer, &arr[j]);
     }
-    
+    */
 }
 /*    
 void draw_edges() {
