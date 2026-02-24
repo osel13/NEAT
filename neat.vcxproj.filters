@@ -19,25 +19,25 @@
     <Filter Include="Source Files\neural_network">
       <UniqueIdentifier>{46659699-db2f-42d2-94e0-61002a5425e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\evolution">
+      <UniqueIdentifier>{f36c975b-4bba-454d-80bf-20fdfaa5998f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tests">
+      <UniqueIdentifier>{7d6121da-ceb0-467b-9c1f-41f80c694c11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\evolution">
+      <UniqueIdentifier>{968e6c4a-0563-42a6-a13f-c9c90af04c1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tests">
+      <UniqueIdentifier>{cbbb5075-a53c-4697-9f40-db3cd92288bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="genome.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="individual.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="population.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test_gpu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="win_test.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="neat_tests.cpp">
+      <Filter>Source Files\tests</Filter>
     </ClCompile>
     <ClCompile Include="activation_function.cpp">
       <Filter>Source Files\neural_network</Filter>
@@ -54,25 +54,28 @@
     <ClCompile Include="neuron.cpp">
       <Filter>Source Files\neural_network</Filter>
     </ClCompile>
+    <ClCompile Include="genome.cpp">
+      <Filter>Source Files\evolution</Filter>
+    </ClCompile>
+    <ClCompile Include="individual.cpp">
+      <Filter>Source Files\evolution</Filter>
+    </ClCompile>
+    <ClCompile Include="population.cpp">
+      <Filter>Source Files\evolution</Filter>
+    </ClCompile>
+    <ClCompile Include="test_gpu.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="win_test.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="genome.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include_cl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="individual.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="population.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="test_gpu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="win_test.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="neat_tests.h">
+      <Filter>Header Files\tests</Filter>
     </ClInclude>
     <ClInclude Include="edge.h">
       <Filter>Header Files\neural_network</Filter>
@@ -88,6 +91,21 @@
     </ClInclude>
     <ClInclude Include="activation_function.hpp">
       <Filter>Header Files\neural_network</Filter>
+    </ClInclude>
+    <ClInclude Include="genome.h">
+      <Filter>Header Files\evolution</Filter>
+    </ClInclude>
+    <ClInclude Include="individual.h">
+      <Filter>Header Files\evolution</Filter>
+    </ClInclude>
+    <ClInclude Include="population.h">
+      <Filter>Header Files\evolution</Filter>
+    </ClInclude>
+    <ClInclude Include="test_gpu.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="win_test.h">
+      <Filter>Header Files\tests</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

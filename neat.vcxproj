@@ -136,6 +136,7 @@
     <ClCompile Include="genome.cpp" />
     <ClCompile Include="individual.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="neat_tests.cpp" />
     <ClCompile Include="neural_network.cpp" />
     <ClCompile Include="neural_network_tests.cpp" />
     <ClCompile Include="neuron.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="genome.h" />
     <ClInclude Include="include_cl.h" />
     <ClInclude Include="individual.h" />
+    <ClInclude Include="neat_tests.h" />
     <ClInclude Include="neural_network.h" />
     <ClInclude Include="neural_network_tests.h" />
     <ClInclude Include="neuron.h" />

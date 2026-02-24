@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <memory>
 
 namespace neural_network {
 	class EdgeId {
@@ -32,8 +33,8 @@ namespace neural_network {
 	};
 
 	struct EdgeHasher {
-		std::size_t operator()(const Edge& edge) const {
-			return EdgeHasher{}(edge.id);
+		std::size_t operator()(const std::unique_ptr<Edge>& edge) const {
+			return EdgeHasher{}(edge->id);
 		}
 
 		std::size_t operator()(const EdgeId& edge_id) const {

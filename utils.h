@@ -9,7 +9,10 @@ template<typename IteratorType, typename RandomGenerator>
 IteratorType random_from_range(IteratorType from, IteratorType to, RandomGenerator& random) {
 	auto distance = std::distance(from, to);
 	std::uniform_int_distribution<> distribution(0, distance - 1);
-	return *std::advance(from, distribution(random));
+	auto advance_by = distribution(random);
+	auto result = from;
+	std::advance(result, advance_by);
+	return result;
 }
 
 template<typename RealType, typename RandomGenerator> requires std::is_floating_point_v<RealType>

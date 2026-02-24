@@ -26,7 +26,6 @@ namespace neat {
 		void crossover();
 		void mutate();
 		void select();
-		void evolve();
 		void print(std::ostream& = std::cout) const;
 	};
 }
