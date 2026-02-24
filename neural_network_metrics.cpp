@@ -58,7 +58,7 @@ namespace neural_network {
 
 	bool NeatNetwork::has_edge(int from_id, int to_id) const
 	{
-		return edges_by_id.contains(EdgeId(from_id, to_id));
+		return edges_by_id.find(EdgeId(from_id, to_id)) != edges_by_id.end();
 	}
 
 	std::vector<NeatNetwork::EdgeGene> NeatNetwork::sorted_edge_genes() const
@@ -99,9 +99,9 @@ namespace neural_network {
 		hidden_ids.reserve(neurons_by_id.size());
 		for (const auto& neuron_entry : neurons_by_id) {
 			const auto neuron_id = neuron_entry.first;
-			if (input_ids.contains(neuron_id) || output_ids.contains(neuron_id)) {
-				continue;
-			}
+		if (input_ids.find(neuron_id) != input_ids.end() || output_ids.find(neuron_id) != output_ids.end()) {
+			continue;
+		}
 			hidden_ids.push_back(neuron_id);
 		}
 		std::sort(hidden_ids.begin(), hidden_ids.end());

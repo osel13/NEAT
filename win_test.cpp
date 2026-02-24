@@ -8,6 +8,11 @@
 #include "include_cl.h"
 #include "win_test.h"
 
+#if !NEAT_HAS_OPENCL
+void win_test()
+{
+}
+#else
 void win_test()
 {
     std::vector<cl::Platform> platforms;
@@ -36,3 +41,4 @@ void win_test()
     queue.enqueueTask(kernel);
     queue.enqueueReadBuffer(memBuf, CL_TRUE, 0, sizeof(buf), buf);
 }
+#endif

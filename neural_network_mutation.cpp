@@ -39,7 +39,7 @@ namespace neural_network {
 			}
 
 			for (const auto* outgoing_edge : outgoing_match->second) {
-				if (visited_ids.contains(outgoing_edge->to())) {
+				if (visited_ids.find(outgoing_edge->to()) != visited_ids.end()) {
 					continue;
 				}
 				pending_ids.push(outgoing_edge->to());

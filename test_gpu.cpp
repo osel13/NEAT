@@ -1,9 +1,18 @@
 #define __CL_ENABLE_EXCEPTIONS
+#include <cstdlib>
 #include <iostream>
+#include <vector>
 
 #include "include_cl.h"
 #include "test_gpu.h"
 
+#if !NEAT_HAS_OPENCL
+int test_gpu()
+{
+	std::cout << "OpenCL headers not available" << std::endl;
+	return 0;
+}
+#else
 int test_gpu()
 {
 	std::vector<cl::Platform> platforms;
@@ -28,3 +37,4 @@ int test_gpu()
 
 	return 0;
 }
+#endif

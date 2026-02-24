@@ -30,7 +30,7 @@ namespace neat {
 	void Genome::mutate()
 	{
 		enum class MutationChoice { ADD_NEURON, ADD_EDGE, CHANGE_WEIGHT, TOGGLE_EDGE };
-		constexpr std::array mutation_choices = {
+		const std::array<MutationChoice, 4> mutation_choices = {
 			MutationChoice::ADD_NEURON,
 			MutationChoice::ADD_EDGE,
 			MutationChoice::CHANGE_WEIGHT,
