@@ -63,6 +63,9 @@
     <ClCompile Include="population.cpp">
       <Filter>Source Files\evolution</Filter>
     </ClCompile>
+    <ClCompile Include="tests_runner.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
     <ClCompile Include="test_gpu.cpp">
       <Filter>Source Files\tests</Filter>
     </ClCompile>
@@ -100,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="population.h">
       <Filter>Header Files\evolution</Filter>
+    </ClInclude>
+    <ClInclude Include="tests_runner.h">
+      <Filter>Header Files\tests</Filter>
     </ClInclude>
     <ClInclude Include="test_gpu.h">
       <Filter>Header Files\tests</Filter>

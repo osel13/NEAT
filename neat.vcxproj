@@ -141,6 +141,7 @@
     <ClCompile Include="neural_network_tests.cpp" />
     <ClCompile Include="neuron.cpp" />
     <ClCompile Include="population.cpp" />
+    <ClCompile Include="tests_runner.cpp" />
     <ClCompile Include="test_gpu.cpp" />
     <ClCompile Include="win_test.cpp" />
   </ItemGroup>
@@ -158,6 +159,7 @@
     <ClInclude Include="neural_network_tests.h" />
     <ClInclude Include="neuron.h" />
     <ClInclude Include="population.h" />
+    <ClInclude Include="tests_runner.h" />
     <ClInclude Include="test_gpu.h" />
     <ClInclude Include="win_test.h" />
   </ItemGroup>
