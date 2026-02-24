@@ -28,25 +28,26 @@ namespace neat {
 
 	void Genome::mutate()
 	{
-		enum class Choices { MUTATE_NEURON, MUTATE_EDGE, MUTATE_WEIGHT, MUTATE_TOGGLE_EDGE };
-		constexpr std::array choices = {
-			Choices::MUTATE_NEURON, 
-			Choices::MUTATE_EDGE, 
-			Choices::MUTATE_WEIGHT, 
-			Choices::MUTATE_TOGGLE_EDGE
+		enum class MutationChoice { ADD_NEURON, ADD_EDGE, CHANGE_WEIGHT, TOGGLE_EDGE };
+		constexpr std::array mutation_choices = {
+			MutationChoice::ADD_NEURON,
+			MutationChoice::ADD_EDGE,
+			MutationChoice::CHANGE_WEIGHT,
+			MutationChoice::TOGGLE_EDGE
 		};
-		const auto choice = random_from_range(choices.begin(), choices.end());
-		switch (*choice) {
-		case Choices::MUTATE_NEURON:
+		const auto choice = random_element(mutation_choices);
+
+		switch (choice) {
+		case MutationChoice::ADD_NEURON:
 			mutate_add_neuron();
 			break;
-		case Choices::MUTATE_EDGE:
+		case MutationChoice::ADD_EDGE:
 			mutate_add_edge();
 			break;
-		case Choices::MUTATE_WEIGHT:
+		case MutationChoice::CHANGE_WEIGHT:
 			mutate_change_weight();
 			break;
-		case Choices::MUTATE_TOGGLE_EDGE:
+		case MutationChoice::TOGGLE_EDGE:
 			mutate_toggle_edge();
 			break;
 		}

@@ -11,6 +11,8 @@ namespace neural_network {
 		friend struct EdgeHasher;
 	public:
 		EdgeId(int from_id, int to_id);
+		int from() const;
+		int to() const;
 		bool operator<(const EdgeId& other) const;
 		bool operator==(const EdgeId& other) const;
 		std::size_t operator()() const;
@@ -25,6 +27,8 @@ namespace neural_network {
 		friend struct EdgeHasher;
 	public:
 		Edge(unsigned from_id, unsigned to_id, unsigned innovation_id);
+		int from() const;
+		int to() const;
 		bool operator==(const Edge& other) const;
 		std::size_t operator()() const;
 		void set_disabled(const bool value = true);

@@ -1,5 +1,4 @@
 #include <set>
-#include <map>
 #include <unordered_map>
 #include "neural_network.h"
 #include "utils.h"
@@ -7,22 +6,27 @@
 namespace neural_network {
 	int NeatNetwork::next_id = 0;
 
+	namespace {
+		constexpr float WEIGHT_MUTATION_MIN_DELTA = -0.25f;
+		constexpr float WEIGHT_MUTATION_MAX_DELTA = 0.25f;
+	}
+
 	Neuron* NeatNetwork::get_neuron_by_id(int id)
 	{
-		auto neuron_it = std::find_if(neurons.begin(), neurons.end(), [&](const SharedNeuronReference& neuron) {
+		const auto neuron_match = std::find_if(neurons.begin(), neurons.end(), [&](const SharedNeuronReference& neuron) {
 			return neuron->id == id;
 		});
-		if (neuron_it == neurons.end()) {
+		if (neuron_match == neurons.end()) {
 			return nullptr;
 		}
-		return neuron_it->get();
+		return neuron_match->get();
 	}
 
 	std::vector<Edge*> NeatNetwork::get_edges_from_neuron(const Neuron& neuron)
 	{
 		auto result = std::vector<Edge*>();
 		for (const auto& edge : edges) {
-			if (edge->id.from_id == neuron.id) {
+			if (edge->from() == neuron.id) {
 				result.push_back(edge.get());
 			}
 		}
@@ -31,28 +35,35 @@ namespace neural_network {
 
 	bool NeatNetwork::creating_edge_would_create_cycle(const Edge& edge) const
 	{
-		if (edge.id.from_id == edge.id.to_id) {
+		const auto candidate_from_id = edge.from();
+		const auto candidate_to_id = edge.to();
+
+		if (candidate_from_id == candidate_to_id) {
 			return true;
 		}
-		auto visited = std::set<int>();
-		auto to_visit = std::set<int>();
-		to_visit.insert(edge.id.to_id);
-		while (!to_visit.empty()) {
-			auto current_id = *to_visit.begin();
-			if (current_id == edge.id.from_id) {
+
+		auto visited_ids = std::set<int>();
+		auto pending_ids = std::set<int>();
+		pending_ids.insert(candidate_to_id);
+
+		while (!pending_ids.empty()) {
+			const auto current_id = *pending_ids.begin();
+			if (current_id == candidate_from_id) {
 				return true;
 			}
-			to_visit.erase(to_visit.begin());
-			visited.insert(current_id);
+			pending_ids.erase(pending_ids.begin());
+			visited_ids.insert(current_id);
+
 			for (const auto& existing_edge : edges) {
-				auto edge_id = existing_edge->id;
-				if (edge_id.from_id == current_id && visited.find(edge_id.to_id) == visited.end()) {
-					to_visit.insert(edge_id.to_id);
-				}
-				if (edge_id.from_id == edge.id.from_id && edge_id.to_id == edge.id.to_id) {
-					if (visited.find(edge_id.to_id) == visited.end()) {
-						to_visit.insert(edge_id.to_id);
-					}
+				const auto existing_from_id = existing_edge->from();
+				const auto existing_to_id = existing_edge->to();
+				const auto is_leading_from_current = existing_from_id == current_id;
+				const auto is_same_as_candidate =
+					existing_from_id == candidate_from_id && existing_to_id == candidate_to_id;
+				const auto has_not_been_visited = visited_ids.find(existing_to_id) == visited_ids.end();
+
+				if ((is_leading_from_current || is_same_as_candidate) && has_not_been_visited) {
+					pending_ids.insert(existing_to_id);
 				}
 			}
 		}
@@ -62,13 +73,13 @@ namespace neural_network {
 	Edge* NeatNetwork::get_edge_by_id(int from_id, int to_id)
 	{
 		const auto edge_id = EdgeId(from_id, to_id);
-		auto edge_it = std::find_if(edges.begin(), edges.end(), [&](const std::unique_ptr<Edge>& edge) {
+		const auto edge_match = std::find_if(edges.begin(), edges.end(), [&](const std::unique_ptr<Edge>& edge) {
 			return edge->id == edge_id;
 		});
-		if (edge_it == edges.end()) {
+		if (edge_match == edges.end()) {
 			return nullptr;
 		}
-		return edge_it->get();
+		return edge_match->get();
 	}
 
 	Edge* NeatNetwork::get_edge_by_id(const Neuron& from, const Neuron& to)
@@ -78,7 +89,7 @@ namespace neural_network {
 
 	Edge* NeatNetwork::get_edge_by_id(const EdgeId& edge_id)
 	{
-		return get_edge_by_id(edge_id.from_id, edge_id.to_id);
+		return get_edge_by_id(edge_id.from(), edge_id.to());
 	}
 
 	void NeatNetwork::mutate_add_neuron()
@@ -86,19 +97,20 @@ namespace neural_network {
 		if (edges.empty()) {
 			return;
 		}
-		auto edge_it = random_from_range(edges.begin(), edges.end());
-		auto& edge = **edge_it;
-		edge.set_disabled();
+
+		auto& selected_edge_link = random_element(edges);
+		auto& selected_edge = *selected_edge_link;
+		selected_edge.set_disabled();
 
 		auto new_neuron = std::make_shared<Neuron>(next_neuron_innovation_number++);
 		neurons.emplace_back(new_neuron);
 
-		auto from_edge = std::make_unique<Edge>(edge.id.from_id, new_neuron->id, next_edge_innovation_number++);
+		auto from_edge = std::make_unique<Edge>(selected_edge.from(), new_neuron->id, next_edge_innovation_number++);
 		from_edge->weight = 1.0f;
 		edges.emplace(std::move(from_edge));
 
-		auto to_edge = std::make_unique<Edge>(new_neuron->id, edge.id.to_id, next_edge_innovation_number++);
-		to_edge->weight = edge.weight;
+		auto to_edge = std::make_unique<Edge>(new_neuron->id, selected_edge.to(), next_edge_innovation_number++);
+		to_edge->weight = selected_edge.weight;
 		edges.emplace(std::move(to_edge));
 	}
 
@@ -107,9 +119,9 @@ namespace neural_network {
 		if (edges.empty()) {
 			return;
 		}
-		auto edge_it = random_from_range(edges.begin(), edges.end());
-		auto& edge = **edge_it;
-		edge.weight += random_from_range(-0.25f, 0.25f);
+		auto& selected_edge_link = random_element(edges);
+		auto& selected_edge = *selected_edge_link;
+		selected_edge.weight += random_from_range(WEIGHT_MUTATION_MIN_DELTA, WEIGHT_MUTATION_MAX_DELTA);
 	}
 
 	void NeatNetwork::mutate_toggle_edge()
@@ -117,19 +129,61 @@ namespace neural_network {
 		if (edges.empty()) {
 			return;
 		}
-		auto edge_it = random_from_range(edges.begin(), edges.end());
-		auto& edge = **edge_it;
-		edge.set_disabled(!edge.is_disabled);
+		auto& selected_edge_link = random_element(edges);
+		auto& selected_edge = *selected_edge_link;
+		selected_edge.set_disabled(!selected_edge.is_disabled);
 	}
 
 	void NeatNetwork::add_neuron(const SharedNeuronReference& new_neuron, const NeatNetwork& old_network, const SharedNeuronReference& old_neuron) {
-		if (std::find(old_network.input_neurons.begin(), old_network.input_neurons.end(), old_neuron) != old_network.input_neurons.end()) {
+		const auto found_input_neuron =
+			std::find(old_network.input_neurons.begin(), old_network.input_neurons.end(), old_neuron);
+		const auto is_input_neuron = found_input_neuron != old_network.input_neurons.end();
+		if (is_input_neuron) {
 			input_neurons.emplace_back(new_neuron);
 		}
-		if (std::find(old_network.output_neurons.begin(), old_network.output_neurons.end(), old_neuron) != old_network.output_neurons.end()) {
+
+		const auto found_output_neuron =
+			std::find(old_network.output_neurons.begin(), old_network.output_neurons.end(), old_neuron);
+		const auto is_output_neuron = found_output_neuron != old_network.output_neurons.end();
+		if (is_output_neuron) {
 			output_neurons.emplace_back(new_neuron);
 		}
+
 		neurons.emplace_back(new_neuron);
+	}
+
+	bool NeatNetwork::is_output_neuron_id(int neuron_id) const
+	{
+		for (const auto& output_neuron : output_neurons) {
+			if (output_neuron->id == neuron_id) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	NeatNetwork::Neurons::const_iterator NeatNetwork::find_neuron_by_id(int neuron_id) const
+	{
+		return std::find_if(neurons.begin(), neurons.end(), [&](const SharedNeuronReference& candidate) {
+			return candidate->id == neuron_id;
+		});
+	}
+
+	void NeatNetwork::collect_next_neurons(const SharedNeuronReference& source_neuron, SharedNeuronSet& next_neurons) const
+	{
+		for (const auto& edge : edges) {
+			if (edge->from() != source_neuron->id) {
+				continue;
+			}
+
+			const auto target_id = edge->to();
+			if (is_output_neuron_id(target_id)) {
+				continue;
+			}
+
+			const auto next_neuron = find_neuron_by_id(target_id);
+			next_neurons.insert(*next_neuron);
+		}
 	}
 
 	void NeatNetwork::add_edge()
@@ -137,13 +191,11 @@ namespace neural_network {
 		if (neurons.empty()) {
 			return;
 		}
-		auto from_neuron_it = random_from_range(neurons.begin(), neurons.end());
-		auto to_neuron_it = random_from_range(neurons.begin(), neurons.end());
-		auto from_neuron = *from_neuron_it;
-		auto to_neuron = *to_neuron_it;
-		auto edge = get_edge_by_id(*from_neuron, *to_neuron);
-		if (edge != nullptr) {
-			edge->set_disabled(false);
+		const auto& from_neuron = random_element(neurons);
+		const auto& to_neuron = random_element(neurons);
+		auto* existing_edge = get_edge_by_id(*from_neuron, *to_neuron);
+		if (existing_edge != nullptr) {
+			existing_edge->set_disabled(false);
 			return;
 		}
 		auto candidate_edge = Edge(from_neuron->id, to_neuron->id, -1);
@@ -160,7 +212,6 @@ namespace neural_network {
 		// Take the dominant neurons and crossover them with recessive neuron counterparts, if they exist
 		assert(id != other.id);
 		NeatNetwork result;
-		const auto threshold = random_from_range(0.1f, 0.9f);
 		crossover_neurons(result, other);
 		crossover_edges(result, other);
 		return result;
@@ -194,20 +245,22 @@ namespace neural_network {
 	}
 
 	void NeatNetwork::evaluate_neuron(const Neuron& neuron) {
-		auto edge_it = std::find_if(edges.begin(), edges.end(), [&](const std::unique_ptr<Edge>& edge) {
-			return edge->id.from_id == neuron.id;
+		const auto outgoing_edge = std::find_if(edges.begin(), edges.end(), [&](const std::unique_ptr<Edge>& edge) {
+			return edge->from() == neuron.id;
 		});
-		if (edge_it == edges.end()) {
+		if (outgoing_edge == edges.end()) {
 			return;
 		}
-		auto edge = edge_it->get();
-		auto neuron_it = std::find_if(neurons.begin(), neurons.end(), [&](const SharedNeuronReference& neuron) {
-			return edge->id.to_id == neuron->id;
+
+		const auto* edge = outgoing_edge->get();
+		const auto target_neuron = std::find_if(neurons.begin(), neurons.end(), [&](const SharedNeuronReference& candidate) {
+			return edge->to() == candidate->id;
 		});
-		if (neuron_it == neurons.end()) {
+		if (target_neuron == neurons.end()) {
 			return;
 		}
-		(*neuron_it)->current_input += edge->evaluate(neuron.evaluate());
+
+		(*target_neuron)->current_input += edge->evaluate(neuron.evaluate());
 	}
 
 	void NeatNetwork::evaluate_layer(const Neurons& layer)
@@ -248,9 +301,9 @@ namespace neural_network {
 		}
 
 		for (const auto& edge : edges) {
-			auto other_edge_it = other_by_innovation.find(edge->innovation_id);
-			if (other_edge_it != other_by_innovation.end()) {
-				result.edges.emplace(std::make_unique<Edge>(edge->crossover(*other_edge_it->second)));
+			auto matching_edge = other_by_innovation.find(edge->innovation_id);
+			if (matching_edge != other_by_innovation.end()) {
+				result.edges.emplace(std::make_unique<Edge>(edge->crossover(*matching_edge->second)));
 				continue;
 			}
 			result.edges.emplace(std::make_unique<Edge>(*edge));
@@ -260,35 +313,18 @@ namespace neural_network {
 	std::vector<float> NeatNetwork::evaluate(const std::vector<float>& input_data)
 	{
 		assert(input_data.size() >= input_neurons.size());
-		std::map<int, Neuron> neuron_map;
 		for (unsigned i = 0; i < input_neurons.size(); ++i) {
 			input_neurons[i]->current_input = input_data[i];
 		}
-		
-		SharedNeuronSet not_visited(input_neurons.begin(), input_neurons.end());
-		while (!not_visited.empty()) {
-			SharedNeuronSet to_visit_next;
-			for (auto& neuron: not_visited) {
+
+		SharedNeuronSet current_neurons(input_neurons.begin(), input_neurons.end());
+		while (!current_neurons.empty()) {
+			SharedNeuronSet next_neurons;
+			for (const auto& neuron : current_neurons) {
 				evaluate_neuron(*neuron);
-				for (const auto& edge : edges) {
-					if (edge->id.from_id == neuron->id) {
-						auto next_neuron = std::find_if(neurons.begin(), neurons.end(), [&](const SharedNeuronReference& neuron) {
-							return neuron->id == edge->id.to_id;
-						});
-						auto is_leading_to_output = false;
-						for (const auto& output_neuron : output_neurons) {
-							if (output_neuron->id == edge->id.to_id) {
-								is_leading_to_output = true;
-								break;
-							}
-						}
-						if (!is_leading_to_output) {
-							to_visit_next.insert(*next_neuron);
-						}
-					}
-				}
+				collect_next_neurons(neuron, next_neurons);
 			}
-			not_visited = to_visit_next;
+			current_neurons = std::move(next_neurons);
 		}
 		std::vector<float> results(output_neurons.size());
 		for (unsigned i = 0; i < output_neurons.size(); ++i) {
@@ -371,7 +407,7 @@ namespace neural_network {
 	bool NeatNetwork::has_edge(int from_id, int to_id) const
 	{
 		for (const auto& edge : edges) {
-			if (edge->id.from_id == from_id && edge->id.to_id == to_id) {
+			if (edge->from() == from_id && edge->to() == to_id) {
 				return true;
 			}
 		}

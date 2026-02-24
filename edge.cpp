@@ -11,6 +11,26 @@ namespace neural_network {
 	{
 	}
 
+	int EdgeId::from() const
+	{
+		return from_id;
+	}
+
+	int EdgeId::to() const
+	{
+		return to_id;
+	}
+
+	int Edge::from() const
+	{
+		return id.from();
+	}
+
+	int Edge::to() const
+	{
+		return id.to();
+	}
+
 	bool Edge::operator==(const Edge& other) const
 	{
 		return id == other.id;

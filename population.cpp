@@ -72,20 +72,27 @@ namespace neat {
 		if (individuals.empty()) {
 			return;
 		}
+
 		auto next_generation = std::vector<Individual>();
 		next_generation.reserve(size);
 		next_generation.emplace_back(individuals[best_fitness_individual_id]);
 
+		const auto pick_parent = [&]() {
+			return &random_element(individuals);
+		};
+
 		while (static_cast<int>(next_generation.size()) < size) {
-			auto parent_a = random_from_range(individuals.begin(), individuals.end());
-			auto parent_b = random_from_range(individuals.begin(), individuals.end());
+			auto parent_a = pick_parent();
+			auto parent_b = pick_parent();
 			if (individuals.size() > 1) {
 				while (parent_a == parent_b) {
-					parent_b = random_from_range(individuals.begin(), individuals.end());
+					parent_b = pick_parent();
 				}
 			}
+
 			next_generation.emplace_back(parent_a->crossover(*parent_b));
 		}
+
 		individuals = std::move(next_generation);
 		best_fitness_individual_id = 0;
 	}

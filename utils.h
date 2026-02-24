@@ -26,11 +26,31 @@ RealOrIteratorType random_from_range(RealOrIteratorType start, RealOrIteratorTyp
 	return random_from_range(start, end, default_generator);
 }
 
+template<typename Container, typename RandomGenerator>
+auto random_element(Container& container, RandomGenerator& random) -> decltype(*container.begin()) {
+	return *random_from_range(container.begin(), container.end(), random);
+}
+
+template<typename Container>
+auto random_element(Container& container) -> decltype(*container.begin()) {
+	return random_element(container, default_generator);
+}
+
+template<typename Container, typename RandomGenerator>
+auto random_element(const Container& container, RandomGenerator& random) -> decltype(*container.begin()) {
+	return *random_from_range(container.begin(), container.end(), random);
+}
+
+template<typename Container>
+auto random_element(const Container& container) -> decltype(*container.begin()) {
+	return random_element(container, default_generator);
+}
+
 template <typename Type, typename RandomGenerator>
 const Type& random_thresholded_pick(float threshold, const Type& a, const Type& b, RandomGenerator& random) {
-    std::bernoulli_distribution distribution(threshold);
-	const auto random_value = distribution(random);
-    return random_value ? a : b;
+	std::bernoulli_distribution distribution(threshold);
+	const auto is_first_selected = distribution(random);
+	return is_first_selected ? a : b;
 }
 
 template <typename Type>

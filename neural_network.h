@@ -9,7 +9,7 @@
 #include <ostream>
 #include <istream>
 #include <memory>
-#include <typeindex> 
+#include <typeindex>
 #include "utils.h"
 #include "activation_function.hpp"
 #include "neuron.h"
@@ -47,6 +47,9 @@ namespace neural_network {
 		Edge* get_edge_by_id(const EdgeId& edge_id);
 		void reset_intermediate_calculations();
 		void add_neuron(const SharedNeuronReference& new_neuron, const NeatNetwork& old_network, const SharedNeuronReference& old_neuron);
+		bool is_output_neuron_id(int neuron_id) const;
+		Neurons::const_iterator find_neuron_by_id(int neuron_id) const;
+		void collect_next_neurons(const SharedNeuronReference& source_neuron, SharedNeuronSet& next_neurons) const;
 		void evaluate_neuron(const Neuron& neuron);
 		void evaluate_layer(const Neurons& layer);
 		void create_special_neuron(SharedNeurons& special_neuron_container, unsigned int count = 1);
@@ -69,37 +72,4 @@ namespace neural_network {
 		std::vector<int> output_neuron_ids() const;
 		bool has_edge(int from_id, int to_id) const;
 	};
-
-	/*
-	// NEAT notes:
-	// - never reduce gene count, only disable some genes
-	// - global innovation number, once set it never changes
-	// - same mutation has to have same innovation number, to prevent exploding innovation number
-	// - same innovation number => matching gene
-	// - disjoint genes = not matching and innovation < max_common_innovation, excess genes = not matching innovation > max_common_innovation
-	// - start diversifying fast, slow down later
-	mutation_add_node() {
-		pick an existing edge
-		disable edge (A-B)
-		add edge to new node (A-NEW), weight 1
-		add edge from new node (NEW-B), weight of disabled edge
-	}
-
-	mutation_add_edge() {
-		pick two nodes not having an edge
-		add edge between them
-	}
-
-	mutation_change_weight() {
-		pick an edge
-		change weight
-	}
-
-	crossover() {
-		align matching genes
-		choose randomly from disjoint genes
-		choose randomly from excess genes
-		if edge is disabled in either parent, disable in child
-	}
-	*/
 }
