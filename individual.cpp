@@ -30,6 +30,11 @@ namespace neat {
 		return fitness;
 	}
 
+	const Genome& Individual::get_genome() const
+	{
+		return genome;
+	}
+
 	void Individual::evaluate_fitness()
 	{
 		constexpr float expected_output_for_zero = 0.0f;

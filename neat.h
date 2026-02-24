@@ -26,7 +26,9 @@ namespace neat {
 			for (int generation = 0; generation < generation_count; ++generation) {
 				population.next_generation();
 			}
-			population.print(output_stream);
+			population.evaluate_fitness();
+			// population.print(output_stream);
+			population.print_topologies(3, output_stream);
 		}
 	};
 

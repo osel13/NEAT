@@ -13,5 +13,6 @@ namespace neat {
 		void mutate();
 		void evaluate_fitness();
 		float get_fitness() const;
+		const Genome& get_genome() const;
 	};
 }

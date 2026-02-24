@@ -3,7 +3,6 @@
 #include "tests_runner.h"
 
 int main() {
-
 #ifndef NDEBUG
 	tests_runner::run_all();
 #endif

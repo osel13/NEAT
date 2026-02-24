@@ -1,9 +1,5 @@
-#include <vector>
 #include <algorithm>
-
-#include "individual.h"
 #include "population.h"
-#include "utils.h"
 
 namespace neat {
 	Population::Population(int size, float speciation_threshold)
@@ -13,11 +9,9 @@ namespace neat {
 		, average_fitness(0)
 		, best_fitness(0)
 		, best_fitness_individual_id(0)
-		, last_innovation_id(0)
-		, generations_without_improvement(0)
 	{
 		individuals.reserve(size);
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < size; ++i) {
 			individuals.emplace_back(Genome(1, 1));
 		}
 	}
@@ -29,10 +23,36 @@ namespace neat {
 		}
 	}
 
+	void Population::print_topologies(size_t count, std::ostream& stream) const
+	{
+		if (individuals.empty() || count == 0) {
+			return;
+		}
+
+		auto ranked_indices = std::vector<size_t>();
+		ranked_indices.reserve(individuals.size());
+		for (size_t i = 0; i < individuals.size(); ++i) {
+			ranked_indices.push_back(i);
+		}
+		std::sort(ranked_indices.begin(), ranked_indices.end(), [&](size_t left, size_t right) {
+			return individuals[left].get_fitness() > individuals[right].get_fitness();
+		});
+
+		const auto topology_count = std::min(count, ranked_indices.size());
+		stream << "\nTopologies (top " << topology_count << ")\n";
+		for (size_t rank = 0; rank < topology_count; ++rank) {
+			const auto index = ranked_indices[rank];
+			const auto fitness = individuals[index].get_fitness();
+			stream << "\n#" << (rank + 1) << " fitness=" << fitness << "\n";
+			stream << individuals[index].get_genome().get_network().topology_diagram();
+		}
+	}
+
 	void Population::next_generation()
 	{
 		evaluate_fitness();
 		select();
+		speciate();
 		crossover();
 		mutate();
 		++generation;
@@ -62,11 +82,6 @@ namespace neat {
 		average_fitness = fitness_sum / static_cast<float>(individuals.size());
 	}
 
-	void Population::speciate()
-	{
-		// Placeholder: species grouping is not yet used in reproduction.
-	}
-
 	void Population::crossover()
 	{
 		if (individuals.empty()) {
@@ -77,24 +92,29 @@ namespace neat {
 		next_generation.reserve(size);
 		next_generation.emplace_back(individuals[best_fitness_individual_id]);
 
-		const auto pick_parent = [&]() {
-			return &random_element(individuals);
-		};
-
 		while (static_cast<int>(next_generation.size()) < size) {
-			auto parent_a = pick_parent();
-			auto parent_b = pick_parent();
+			const auto& selected_species = pick_species();
+			const auto& parent_a = pick_parent_from_species(selected_species);
+			auto* parent_b = &pick_parent_from_species(selected_species);
 			if (individuals.size() > 1) {
-				while (parent_a == parent_b) {
-					parent_b = pick_parent();
+				const auto empty_species = std::vector<size_t>();
+				for (int attempt = 0; attempt < 32 && &parent_a == parent_b; ++attempt) {
+					const auto should_pick_globally = selected_species.size() <= 1;
+					parent_b = should_pick_globally
+						? &pick_parent_from_species(empty_species)
+						: &pick_parent_from_species(selected_species);
 				}
 			}
-
-			next_generation.emplace_back(parent_a->crossover(*parent_b));
+			if (&parent_a == parent_b) {
+				next_generation.emplace_back(parent_a);
+				continue;
+			}
+			next_generation.emplace_back(parent_a.crossover(*parent_b));
 		}
 
 		individuals = std::move(next_generation);
 		best_fitness_individual_id = 0;
+		species.clear();
 	}
 
 	void Population::mutate()
@@ -109,12 +129,14 @@ namespace neat {
 		if (individuals.size() <= 2) {
 			return;
 		}
+
 		std::sort(individuals.begin(), individuals.end(), [](const Individual& left, const Individual& right) {
 			return left.get_fitness() > right.get_fitness();
 		});
+
 		const auto survivor_count = static_cast<size_t>(std::max(2, static_cast<int>(individuals.size() / 2)));
 		individuals.erase(individuals.begin() + survivor_count, individuals.end());
 		best_fitness_individual_id = 0;
+		species.clear();
 	}
-
 } // namespace neat

@@ -1,6 +1,7 @@
 #include "genome.h"
 #include <memory>
 #include <array>
+#include "utils.h"
 
 namespace neat {
 

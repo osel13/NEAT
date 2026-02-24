@@ -48,6 +48,18 @@
     <ClCompile Include="neural_network.cpp">
       <Filter>Source Files\neural_network</Filter>
     </ClCompile>
+    <ClCompile Include="neural_network_crossover.cpp">
+      <Filter>Source Files\neural_network</Filter>
+    </ClCompile>
+    <ClCompile Include="neural_network_evaluation.cpp">
+      <Filter>Source Files\neural_network</Filter>
+    </ClCompile>
+    <ClCompile Include="neural_network_metrics.cpp">
+      <Filter>Source Files\neural_network</Filter>
+    </ClCompile>
+    <ClCompile Include="neural_network_mutation.cpp">
+      <Filter>Source Files\neural_network</Filter>
+    </ClCompile>
     <ClCompile Include="neural_network_tests.cpp">
       <Filter>Source Files\neural_network</Filter>
     </ClCompile>
@@ -61,6 +73,9 @@
       <Filter>Source Files\evolution</Filter>
     </ClCompile>
     <ClCompile Include="population.cpp">
+      <Filter>Source Files\evolution</Filter>
+    </ClCompile>
+    <ClCompile Include="population_speciation.cpp">
       <Filter>Source Files\evolution</Filter>
     </ClCompile>
     <ClCompile Include="tests_runner.cpp">

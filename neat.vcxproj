@@ -138,9 +138,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="neat_tests.cpp" />
     <ClCompile Include="neural_network.cpp" />
+    <ClCompile Include="neural_network_crossover.cpp" />
+    <ClCompile Include="neural_network_evaluation.cpp" />
+    <ClCompile Include="neural_network_metrics.cpp" />
+    <ClCompile Include="neural_network_mutation.cpp" />
     <ClCompile Include="neural_network_tests.cpp" />
     <ClCompile Include="neuron.cpp" />
     <ClCompile Include="population.cpp" />
+    <ClCompile Include="population_speciation.cpp" />
     <ClCompile Include="tests_runner.cpp" />
     <ClCompile Include="test_gpu.cpp" />
     <ClCompile Include="win_test.cpp" />
